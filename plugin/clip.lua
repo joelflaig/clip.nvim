@@ -13,10 +13,20 @@ local M = {
   }
 }
 
+local function close(bufnr, winid)
+  if bufnr ~= nil and vim.api.nvim_buf_is_valid(bufnr) then
+    vim.api.nvim_buf_delete(bufnr, { force = true })
+  end
+
+  if winid ~= nil and vim.api.nvim_win_is_valid(winid) then
+    vim.api.nvim_win_close(winid, true)
+  end
+end
+
 ---Sets up autocmds and keymaps for the given buffer
 ---@param bufnr integer
 ---@param mode string -- May be "copy" or "paste"
-local function setup_autocmds_and_keymaps(bufnr, mode)
+local function setup_autocmds_and_keymaps(bufnr, winid, mode)
   if mode == "copy" then
   elseif mode == "paste" then
     vim.keymap.set("n", "<CR>", function()
@@ -24,6 +34,10 @@ local function setup_autocmds_and_keymaps(bufnr, mode)
         vim.api.nvim_get_current_line(),
         true, 1
       )
+    end, { buffer = bufnr, silent = true })
+
+    vim.keymap.set("n", "<Esc>", function()
+      close(bufnr, winid)
     end, { buffer = bufnr, silent = true })
 
   else
@@ -64,7 +78,7 @@ local function popup(mode)
     error("Failed to create window")
   end
 
-  setup_autocmds_and_keymaps(bufnr, mode)
+  setup_autocmds_and_keymaps(bufnr, win_id, mode)
 
   vim.api.nvim_set_option_value("number", true, {
     win = win_id,

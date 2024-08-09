@@ -1,5 +1,16 @@
 local M = {
   opts = {
+    regs = { -- registers to show
+      alphabetical = {
+        "a"
+      },
+      numerical = {
+        "1"
+      },
+      special = {
+        "%"
+      },
+    },
     popup = {
       -- if values are smaller than 1, they are treated as percentages
       dims = {
@@ -45,6 +56,39 @@ local function setup_autocmds_and_keymaps(bufnr, winid, mode)
   end
 end
 
+---Sets the content of the given buffer
+---@param bufnr integer
+---@param mode string
+local function set_content(bufnr, mode)
+  if mode == "paste" then
+    local alph = {}
+    local num = {}
+    local special = {}
+
+    table.insert(alph, "Alphabetical registers:")
+    for _,i in ipairs(M.opts.regs.alphabetical) do
+      table.insert(alph, vim.fn.getreg(i))
+    end
+    table.insert(alph, "")
+
+    table.insert(num, "Numerical registers:")
+    for _,i in ipairs(M.opts.regs.numerical) do
+      table.insert(num, vim.fn.getreg(i))
+    end
+    table.insert(num, "")
+
+    table.insert(special, "Special registers:")
+    for _,i in ipairs(M.opts.regs.special) do
+      table.insert(special, vim.fn.getreg(i))
+    end
+    table.insert(special, "")
+
+    vim.api.nvim_buf_set_lines(bufnr, 0, #alph, false, alph)
+    vim.api.nvim_buf_set_lines(bufnr, #alph + 1, #num, false, num)
+    vim.api.nvim_buf_set_lines(bufnr, #num + 1, #special, false, special)
+  end
+end
+
 ---Opens a popup
 ---@param mode string -- May be "copy" or "paste"
 ---@return integer,integer
@@ -78,6 +122,7 @@ local function popup(mode)
     error("Failed to create window")
   end
 
+  set_content(bufnr, mode)
   setup_autocmds_and_keymaps(bufnr, win_id, mode)
 
   vim.api.nvim_set_option_value("number", true, {

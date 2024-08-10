@@ -28,26 +28,8 @@ Using `lazy.nvim`:
 
 ## Configuration
 
-```lua
-opts = {
-  regs = { -- registers to show
-    alphabetical = {
-    },
-    numerical = {
-    },
-    special = {
-    },
-  },
-  popup = {
-    -- if values are smaller than 1, they are treated as percentages
-    dims = {
-      height = 10,
-      width = 0.35,
-    },
-    title = "─Clip",
-    title_pos = "left",
-    style = "rounded",
-  }
-}
-```
+There are no configuration options, but you can configure the 
+highlight groups if you want to, they are listed down below.
+
+### Highlight groups
 

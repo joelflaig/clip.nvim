@@ -40,6 +40,7 @@ end
 local function setup_autocmds_and_keymaps(bufnr, winid, mode)
   if mode == "copy" then
   elseif mode == "paste" then
+
     vim.keymap.set("n", "<CR>", function()
       vim.api.nvim_paste(
         vim.api.nvim_get_current_line(),
@@ -47,7 +48,7 @@ local function setup_autocmds_and_keymaps(bufnr, winid, mode)
       )
     end, { buffer = bufnr, silent = true })
 
-    vim.keymap.set("n", "<Esc>", function()
+    vim.keymap.set("n", "q", function()
       close(bufnr, winid)
     end, { buffer = bufnr, silent = true })
 
@@ -65,27 +66,39 @@ local function set_content(bufnr, mode)
     local num = {}
     local special = {}
 
+    local str
+    local pos
+
     table.insert(alph, "Alphabetical registers:")
     for _,i in ipairs(M.opts.regs.alphabetical) do
-      table.insert(alph, vim.fn.getreg(i))
+      str = vim.fn.getreg(i)
+      str = string.gsub(str, "\n", "󰌑")
+
+      table.insert(alph, i..": "..str)
     end
     table.insert(alph, "")
 
     table.insert(num, "Numerical registers:")
     for _,i in ipairs(M.opts.regs.numerical) do
-      table.insert(num, vim.fn.getreg(i))
+      str = vim.fn.getreg(i)
+      str = string.gsub(str, "\n", "󰌑")
+
+      table.insert(num, i..": "..str)
     end
     table.insert(num, "")
 
     table.insert(special, "Special registers:")
     for _,i in ipairs(M.opts.regs.special) do
-      table.insert(special, vim.fn.getreg(i))
+      str = vim.fn.getreg(i)
+      str = string.gsub(str, "\n", "󰌑")
+
+      table.insert(special, i..": "..str)
     end
     table.insert(special, "")
 
     vim.api.nvim_buf_set_lines(bufnr, 0, #alph, false, alph)
-    vim.api.nvim_buf_set_lines(bufnr, #alph + 1, #num, false, num)
-    vim.api.nvim_buf_set_lines(bufnr, #num + 1, #special, false, special)
+    vim.api.nvim_buf_set_lines(bufnr, #alph + 1, #alph + #num, false, num)
+    vim.api.nvim_buf_set_lines(bufnr, #alph + #num + 1, #alph + #num + #special, false, special)
   end
 end
 
@@ -122,8 +135,8 @@ local function popup(mode)
     error("Failed to create window")
   end
 
-  set_content(bufnr, mode)
   setup_autocmds_and_keymaps(bufnr, win_id, mode)
+  set_content(bufnr, mode)
 
   vim.api.nvim_set_option_value("number", true, {
     win = win_id,

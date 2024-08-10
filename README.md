@@ -1,6 +1,6 @@
 # clip.nvim
 
-**A list-like view for all your vim registers, written in lua.**
+**Edit your vim registers like text, written in lua.**
 
 ## Prerequisites
 

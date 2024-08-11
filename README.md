@@ -1,6 +1,10 @@
 # clip.nvim
 
-**Edit your vim registers like text, written in lua.**
+**Thought this might be a fun way to use registers.
+Written in lua.**
+
+To be honest, I have no idea why you would want to use this, 
+I just thought, it might be a fun idea for my first nvim plugin.
 
 ## Prerequisites
 
